@@ -14,7 +14,6 @@ def get_key_len(ct, max_len=33):
         seq = np.array(get_seq(ct, i))
         ioc = v_ioc(seq)
         res.append(ioc.mean())
-    #print(*zip(np.argsort(res), res), sep="\n")
     return np.argmin(np.abs(np.array(res) - global_ioc)) + 2
 
 
