@@ -5,14 +5,17 @@ from scipy.stats import chisquare
 
 v_ioc = np.vectorize(get_ioc)
 
+global_ioc = get_ioc(read_file('катерина.txt'))
+
+
 def get_key_len(ct, max_len=33):
     res = []
     for i in range(2, max_len+1):
         seq = np.array(get_seq(ct, i))
         ioc = v_ioc(seq)
         res.append(ioc.mean())
-
-    return np.argmax(res) + 2
+    #print(*zip(np.argsort(res), res), sep="\n")
+    return np.argmin(np.abs(np.array(res) - global_ioc)) + 2
 
 
 def get_key(ct, key_len):
@@ -33,6 +36,7 @@ def get_key(ct, key_len):
 
 
 def analyze_encrypted_text(text):
+    print(f"Used IOC {global_ioc}")
     proposed = ""
     key_len = get_key_len(text)
     print(f"[1/3] ### Key length: {key_len}")
