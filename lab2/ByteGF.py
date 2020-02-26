@@ -18,7 +18,7 @@ class BitGF:
     def __getitem__(self, item):
         return self.bits[item]
 
-    def __repr__(self):
+    def repr2(self):
         return ''.join((map(lambda x: '1' if x else '0', reversed(self.bits))))
 
     def __str__(self):
@@ -35,6 +35,9 @@ class BitGF:
     def _reduce(this: np.array):
         p = [True, False, False, False, True, True, False, True, True]
         while True:
+            if not any(this):
+                return np.full(8, False)
+
             this = this[np.where(this)[0][0]:]
 
             if len(this) < 9:
@@ -61,10 +64,21 @@ class BitGF:
         return BitGF(c[::-1])
 
     def __pow__(self, power, modulo=None):
-        t = self
-        for i in range(power-1):
-            t = t*self
-        return t
+        if power == 0:
+            return BitGF.from_bytes('00000001')
+
+        result = BitGF.from_bytes('00000001')
+        base = self
+        while power > 0:
+
+            if power % 2 == 0:
+                power = power // 2
+                base = base * base
+            else:
+                power = power - 1
+                result = result * base
+
+        return result
 
     def __invert__(self):
         if any(self.bits):
@@ -74,6 +88,16 @@ class BitGF:
 
     def __eq__(self, other):
         return self.bits == other.bits
+
+    def repr16(self):
+        return hex(int(self.repr2(), 2))[2:].zfill(2)
+
+    def __repr__(self):
+        return self.repr16()
+
+    @classmethod
+    def from_hex(cls, hex_str: str):
+        return cls.from_bytes(bin(int(hex_str, 16))[2:].zfill(8))
 
 
 class ByteGF:
@@ -86,10 +110,11 @@ class ByteGF:
         return self.bytes[item]
 
     def __repr__(self):
-        return ' '.join((*map(repr, self.bytes),))
+        return ' '.join((*map(lambda x: x.repr16(), self.bytes),))
 
     def __str__(self):
-        return '+'.join(f'{repr(self[i])}x^{i}' for i in range(3, 0, -1)) + f'+{repr(self[0])}'
+        return '+'.join(f'[{self[i].repr16()}]x^{i}' for i in range(3, 0, -1) if any(self[i])) +\
+               f'+[{repr(self[0].repr16())}]'
 
     def __add__(self, other):
         assert isinstance(other, ByteGF), "Can only add Bytes."
@@ -99,7 +124,7 @@ class ByteGF:
         return ByteGF(res)
 
     def __mul__(self, other):
-        a = np.concatenate([np.roll(self.bytes, i) for i in range(4)]).reshape((4, 4)).transpose()
+        a = np.concatenate([np.roll(self.bytes[::-1], i) for i in range(4)]).reshape((4, 4)).transpose()
         b = other.bytes
         return ByteGF(a.dot(b))
 
@@ -111,3 +136,4 @@ if __name__ == '__main__':
     b = ByteGF(np.array([a, a**2, a**3, a**4]))
     c = ByteGF(np.array([a, a**2, a**3, a**4][::-1]))
     print(b*c)
+    print(repr(b*c))

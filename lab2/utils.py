@@ -5,7 +5,7 @@ from lab2.ByteGF import ByteGF, BitGF
 def text2byte_generator(text: str):
     encoded = np.array([BitGF.from_bytes(f"{ord(i):08b}") for i in text])
     if len(encoded) % 16 != 0:
-        encoded = np.concatenate((encoded, ['00000000']*(16 - len(encoded) % 16)))
+        encoded = np.concatenate((encoded, [BitGF.from_bytes('00000000')]*(16 - len(encoded) % 16)))
     for element in np.split(encoded, len(encoded) // 16):
         yield np.reshape(element, (4, 4)).transpose()
 
