@@ -76,7 +76,7 @@ def add_round_key(matrix: np.array, keys: np.array):
 
 
 def key_expansion(key: np.array, n_r=10):
-    key = deepcopy(key)
+    key = deepcopy(key.transpose())
     yield key.transpose()
     for i in range(n_r):
         t = key[-1]
@@ -93,7 +93,7 @@ def key_expansion(key: np.array, n_r=10):
 def encrypt(state, key):
     key_schedule = key_expansion(key)
     key = next(key_schedule)
-    state = add_round_key(state, key)
+    state = add_round_key(deepcopy(state), key)
     for step in range(9):
         state = sub_bytes(state)
         state = shift_rows(state)
@@ -111,7 +111,7 @@ def encrypt(state, key):
 def decrypt(state, key):
     key_schedule = reversed([deepcopy(key) for key in key_expansion(key)])
     key = next(key_schedule)
-    state = add_round_key(state, key)
+    state = add_round_key(deepcopy(state), key)
     for step in range(9):
         state = inv_shift_rows(state)
         state = inv_sub_bytes(state)
@@ -163,9 +163,9 @@ if __name__ == '__main__':
         BitGF.from_hex('cf'),
         BitGF.from_hex('4f'),
         BitGF.from_hex('3c'),
-    ]).reshape((4, 4))
+    ]).reshape((4, 4)).transpose()
     print(inp)
     enc = encrypt(inp, key1)
     print(enc)
     decrypted = decrypt(enc, key1)
-    print(decrypted)
+    print(decrypted == inp)
