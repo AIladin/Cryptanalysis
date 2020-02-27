@@ -10,11 +10,17 @@ def text2byte_generator(text: str):
         yield np.reshape(element, (4, 4)).transpose()
 
 
+def get_random_chunk():
+    return np.array([BitGF.random() for i in range(16)]).reshape(4, 4)
+
+
 def byte2text(matrix: np.array):
-    flat = np.transpose(matrix).flatten()
     res = ''
-    for byte in flat:
-        res += chr(int(repr(byte), 2))
+    for chunk in matrix:
+        flat = np.transpose(chunk).flatten()
+        for byte in flat:
+            if byte != BitGF.from_hex('00'):
+                res += chr(int(repr(byte), 16))
     return res
 
 

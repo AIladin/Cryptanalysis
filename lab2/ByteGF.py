@@ -87,7 +87,7 @@ class BitGF:
             return self
 
     def __eq__(self, other):
-        return self.bits == other.bits
+        return all(self.bits == other.bits)
 
     def repr16(self):
         return hex(int(self.repr2(), 2))[2:].zfill(2)
@@ -98,6 +98,10 @@ class BitGF:
     @classmethod
     def from_hex(cls, hex_str: str):
         return cls.from_bytes(bin(int(hex_str, 16))[2:].zfill(8))
+
+    @classmethod
+    def random(cls):
+        return cls.from_bytes(bin(np.random.randint(0, 256))[2:].zfill(8))
 
 
 class ByteGF:
