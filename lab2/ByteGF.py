@@ -132,12 +132,15 @@ class ByteGF:
         b = other.bytes
         return ByteGF(a.dot(b))
 
+    def __pow__(self, power):
+        x = self
+        for i in range(power-1):
+            print(x)
+            x = self * x
+
+        return x
+
 
 if __name__ == '__main__':
-    a = BitGF.from_bytes('11000000')
-    print(~a)
-    print(a, a**2, a**3, a**4)
-    b = ByteGF(np.array([a, a**2, a**3, a**4]))
-    c = ByteGF(np.array([a, a**2, a**3, a**4][::-1]))
-    print(b*c)
-    print(repr(b*c))
+    c = ByteGF(np.array([BitGF.from_hex('02'), BitGF.from_hex('01'), BitGF.from_hex('01'), BitGF.from_hex('03')]))
+    print(c**255)
