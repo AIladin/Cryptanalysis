@@ -20,7 +20,7 @@ def byte2text(matrix: np.array):
         flat = np.transpose(chunk).flatten()
         for byte in flat:
             if byte != BitGF.from_hex('00'):
-                res += chr(int(repr(byte), 16))
+                res += byte.repr16()
     return res
 
 

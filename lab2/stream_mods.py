@@ -6,6 +6,7 @@ from copy import deepcopy
 
 def cbc_encrypt(stream, key):
     iv = get_random_chunk()
+    print(byte2text(iv))
     yield iv
     c = iv
     for chunk in stream:

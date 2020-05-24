@@ -103,6 +103,8 @@ class BitGF:
     def random(cls):
         return cls.from_bytes(bin(np.random.randint(0, 256))[2:].zfill(8))
 
+    def compare(self, other):
+        return np.sum(self.bits != other.bits)
 
 class ByteGF:
     def __init__(self, byte_array: np.array):

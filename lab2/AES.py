@@ -68,6 +68,7 @@ def inv_mix_columns(matrix: np.array):
 
 
 def add_round_key(matrix: np.array, keys: np.array):
+
     transposed = matrix.transpose()
     t_keys = keys.transpose()
     for i in range(4):
@@ -77,13 +78,13 @@ def add_round_key(matrix: np.array, keys: np.array):
 
 def key_expansion(key: np.array, n_r=10):
     key = deepcopy(key.transpose())
+
     yield deepcopy(key.transpose())
     for i in range(n_r):
         t = key[-1]
         t = np.roll(t, -1)
         t = sub_bytes(t)
         r_con = BitGF.from_bytes('00000010') ** i
-        #print(i, r_con.repr2())
         t[0] += r_con
         key[0] = t + key[0]
         for j in range(1, 4):
@@ -91,12 +92,12 @@ def key_expansion(key: np.array, n_r=10):
         yield deepcopy(key.transpose())
 
 
-def encrypt(state, key):
+def encrypt(state, key, rounds=9):
     key_schedule = key_expansion(key)
     key = next(key_schedule)
     state = add_round_key(deepcopy(state), key)
 
-    for step in range(9):
+    for step in range(rounds):
         state = sub_bytes(state)
         state = shift_rows(state)
         state = mix_columns(state)
