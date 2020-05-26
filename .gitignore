@@ -5,3 +5,8 @@
 lab2/__pycache__/
 
 lab3/SHA256/__pycache__/
+/lab4/.ipynb_checkpoints/
+
+lab4/RSA/__pycache__/
+
+.idea/
