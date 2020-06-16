@@ -27,15 +27,15 @@ def keygen(byte_len=256):
     :return: 'N', 'e', 'd'.
     """
     # generate two big prime numbers.
-    p = random_prime(byte_len // 2)
-    q = random_prime(byte_len // 2)
+    p = 31
+    q = 37
 
     # calculate Euler's totient function.
     phi = (p - 1) * (q - 1)
 
-    e = 0  # generate random private key.
-    while e == 0 or e > phi or GCD(e, phi) != 1:
-        e = randint(16, phi)
+    e = 3  # generate random private key.
+    # while e == 0 or e > phi or GCD(e, phi) != 1:
+    #     e = randint(16, phi)
 
     d = mod_inv(e, phi)  # calculate multiplicative inverse.
     assert (e * d) % phi == 1, "Something went wrong."

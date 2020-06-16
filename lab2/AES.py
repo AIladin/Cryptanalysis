@@ -93,16 +93,19 @@ def key_expansion(key: np.array, n_r=10):
 
 
 def encrypt(state, key, rounds=9):
+
     key_schedule = key_expansion(key)
     key = next(key_schedule)
     state = add_round_key(deepcopy(state), key)
-
+    print("Before cycle         :\n", state)
     for step in range(rounds):
         state = sub_bytes(state)
         state = shift_rows(state)
         state = mix_columns(state)
         key = next(key_schedule)
         state = add_round_key(state, key)
+        print("After first loop :\n", state)
+        return
 
     state = sub_bytes(state)
     state = shift_rows(state)
@@ -130,7 +133,7 @@ def decrypt(state, key):
 
 
 if __name__ == '__main__':
-    inp = np.array([
+    pt = np.array([
         BitGF.from_bytes('00000000'),
         BitGF.from_bytes('00000000'),
         BitGF.from_bytes('00000000'),
@@ -167,8 +170,8 @@ if __name__ == '__main__':
         BitGF.from_bytes('11111111'),
         BitGF.from_bytes('11111111'),
     ]).reshape((4, 4)).transpose()
-    #print(inp)
-    enc = encrypt(key1, inp)
-    print(enc)
-    decrypted = decrypt(enc, key1)
-    #print(decrypted == inp)
+    print("Initial state :\n", pt)
+    print("Initial key   :\n", key1)
+    enc = encrypt(pt, np.copy(key1))
+
+

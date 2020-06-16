@@ -94,10 +94,7 @@ def small_sigma1(x: Bits):
     return rotr(x, 17) ^ rotr(x, 19) ^ shr(x, 10)
 
 
-MODULUS = 2 ** 32
-
-
-def bits_sum(*args, width=8):
+def bits_sum(*args, width=8, mod=2**32, mod_len=32):
     """ Sum of Bits objects as integers modulus 2 ** 32
 
     :param args: iterable of Bits objects.
@@ -107,5 +104,5 @@ def bits_sum(*args, width=8):
     rez = 0
     for bits in args:
         assert isinstance(bits, Bits)
-        rez = (rez + bits.intbe) % MODULUS
-    return Bits("{0:#0{1}x}".format(rez, width + 2), length=32)
+        rez = (rez + bits.intbe) % mod
+    return Bits("{0:#0{1}x}".format(rez, width + 2), length=mod_len)
